@@ -1,0 +1,164 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\StatusSubBlock;
+use App\Models\SubBlock;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
+
+class StatusSubBlockController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request): View
+    {
+        $query = StatusSubBlock::with('subBlock')
+            ->join('sub_blocks', 'status_sub_blocks.kode_petak', '=', 'sub_blocks.kode_petak')
+            ->orderBy('sub_blocks.kode_petak')
+            ->select('status_sub_blocks.*');
+
+        // Apply search filter
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->input('search');
+            Log::info('Searching for:', ['search' => $search]);
+
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('UPPER(status_sub_blocks.kode_petak) LIKE ?', ['%'.strtoupper($search).'%'])
+                  ->orWhereRaw('UPPER(sub_blocks.blok) LIKE ?', ['%'.strtoupper($search).'%']);
+            });
+        }
+
+        // Apply status filter
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status_sub_blocks.status', $request->status);
+        }
+
+        // Apply tahun filter
+        if ($request->has('tahun') && $request->tahun !== '') {
+            $query->whereYear('status_sub_blocks.tanggal_update', $request->tahun);
+        }
+
+        $statusSubBlocks = $query->paginate(10);
+        $statusSubBlocks->appends($request->query());
+
+        return view('backend.subblock.status.status', compact('statusSubBlocks'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function create()
+    {
+        $subBlocks = SubBlock::orderBy('kode_petak')->get();
+        return view('backend.subblock.status.create', compact('subBlocks'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'kode_petak' => 'required|string|exists:sub_blocks,kode_petak',
+            'tanggal_update' => 'required|date',
+            'status' => 'required|string|max:100',
+            'luas_status' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        // Add tahun from tanggal_update
+        $validated['tahun'] = date('Y', strtotime($validated['tanggal_update']));
+        $validated['aktif'] = true;
+
+        try {
+            StatusSubBlock::create($validated);
+            return redirect()->route('status-sub-blocks.index')
+                ->with('success', 'Status Sub Block berhasil ditambahkan');
+        } catch (\Exception $e) {
+            Log::error('Error creating status sub block: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menambahkan Status Sub Block');
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\StatusSubBlock  $statusSubBlock
+     * @return \Illuminate\Http\Response
+     */
+    public function show(StatusSubBlock $statusSubBlock)
+    {
+        return view('backend.subblock.status.show', compact('statusSubBlock'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\StatusSubBlock  $statusSubBlock
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(StatusSubBlock $statusSubBlock)
+    {
+        $subBlocks = SubBlock::orderBy('kode_petak')->get();
+        return view('backend.subblock.status.edit', compact('statusSubBlock', 'subBlocks'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\StatusSubBlock  $statusSubBlock
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, StatusSubBlock $statusSubBlock)
+    {
+        $validated = $request->validate([
+            'kode_petak' => 'required|string|exists:sub_blocks,kode_petak',
+            'tanggal_update' => 'required|date',
+            'status' => 'required|string|max:100',
+            'luas_status' => 'required|numeric|min:0',
+            'keterangan' => 'nullable|string',
+        ]);
+
+        // Add tahun from tanggal_update
+        $validated['tahun'] = date('Y', strtotime($validated['tanggal_update']));
+
+        try {
+            $statusSubBlock->update($validated);
+            return redirect()->route('status-sub-blocks.index')
+                ->with('success', 'Status Sub Block berhasil diperbarui');
+        } catch (\Exception $e) {
+            Log::error('Error updating status sub block: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memperbarui Status Sub Block');
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\StatusSubBlock  $statusSubBlock
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(StatusSubBlock $statusSubBlock)
+    {
+        try {
+            $statusSubBlock->delete();
+            return redirect()->route('status-sub-blocks.index')
+                ->with('success', 'Status Sub Block berhasil dihapus');
+        } catch (\Exception $e) {
+            Log::error('Error deleting status sub block: ' . $e->getMessage());
+            return back()->with('error', 'Gagal menghapus Status Sub Block');
+        }
+    }
+}

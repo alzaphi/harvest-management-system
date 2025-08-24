@@ -1,0 +1,58 @@
+/* Compact Pagination Styles */
+.pagination {
+    --bs-pagination-padding-x: 0.5rem;
+    --bs-pagination-padding-y: 0.2rem;
+    --bs-pagination-font-size: 0.75rem;
+    --bs-pagination-border-radius: 0.2rem;
+    margin: 0;
+}
+
+.pagination .page-link {
+    min-width: 1.8rem;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+    line-height: 1.2;
+    font-size: 0.75rem;
+}
+
+.pagination .btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.pagination .page-jump {
+    font-size: 0.75rem;
+    margin: 0 0.5rem;
+}
+
+.pagination .page-jump input {
+    font-size: 0.75rem;
+    height: 1.5rem;
+    padding: 0 0.25rem;
+    width: 2.5rem;
+}
+
+.pagination .page-link:hover,
+.pagination .btn:hover {
+    background-color: #e9ecef;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link,
+.pagination .btn:disabled {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    opacity: 0.7;
+}
+
+/* Ensure pagination is right-aligned in cards */
+.card-footer .pagination {
+    justify-content: flex-end;
+}

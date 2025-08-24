@@ -1,0 +1,284 @@
+/* Dashboard Cards */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(200px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.dashboard-card {
+    border-radius: 10px;
+    padding: 1.25rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+    display: block;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    display: inline-block;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.card-title {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0.5rem 0;
+}
+
+.card-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Card Colors */
+.card-blue {
+    background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.card-green {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.card-yellow {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.card-purple {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+}
+
+.card-indigo {
+    background: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+}
+
+.card-red {
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+.card-orange {
+    background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
+}
+
+.card-pink {
+    background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+}
+
+.card-cyan {
+    background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+}
+
+.card-teal {
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+}
+
+/* Dashboard Container */
+.vendor-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Recent Activity Section */
+.activity-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    margin-top: 2rem;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.activity-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.view-all {
+    color: #3b82f6;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.view-all:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    background: white;
+    border-radius: 10px;
+    transition: all 0.2s;
+    border: 1px solid #f3f4f6;
+}
+
+.activity-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.activity-content {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    gap: 1rem;
+}
+
+.activity-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.activity-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.activity-icon.blue {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.activity-icon.green {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.activity-icon.purple {
+    background-color: #f3e8ff;
+    color: #7e22ce;
+}
+
+.activity-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-title {
+    font-weight: 500;
+    color: #1f2937;
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+}
+
+.activity-time {
+    color: #6b7280;
+    font-size: 0.8125rem;
+    margin: 0;
+}
+
+.activity-badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    margin-left: 0.5rem;
+    white-space: nowrap;
+}
+
+.activity-badge.blue {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.activity-badge.green {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.activity-badge.purple {
+    background-color: #f3e8ff;
+    color: #6b21a8;
+}
+
+/* Responsive Grid */
+@media (min-width: 1280px) {
+    .dashboard-container {
+        grid-template-columns: repeat(5, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 1279px) and (min-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: repeat(4, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 1023px) and (min-width: 768px) {
+    .dashboard-container {
+        grid-template-columns: repeat(3, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 767px) and (min-width: 640px) {
+    .dashboard-container {
+        grid-template-columns: repeat(2, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 639px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .activity-content {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .activity-badge {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -1,0 +1,318 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\SubBlock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
+
+class SubBlockController extends Controller
+{
+    // Middleware auth sementara dinonaktifkan untuk testing
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
+
+
+    public function index(Request $request)
+    {
+        try {
+            // Debug: Log request data
+            \Illuminate\Support\Facades\Log::info('SubBlock index request', ['request' => $request->all()]);
+
+            $query = SubBlock::query();
+
+            // Search functionality
+            if ($request->filled('kode_petak')) {
+                $query->where('kode_petak', 'like', '%' . $request->kode_petak . '%');
+            }
+
+            // Get distinct estates
+            $estates = SubBlock::select('estate')
+                ->distinct()
+                ->orderBy('estate')
+                ->pluck('estate');
+
+            // Get divisions grouped by estate
+            $estatesWithDivisions = [];
+            foreach ($estates as $estate) {
+                $estatesWithDivisions[$estate] = SubBlock::where('estate', $estate)
+                    ->select('divisi')
+                    ->distinct()
+                    ->orderBy('divisi')
+                    ->pluck('divisi')
+                    ->toArray();
+            }
+
+            $subblocks = $query->paginate(13)->onEachSide(1);
+
+            // Debug: Log data yang akan dikirim ke view
+            \Illuminate\Support\Facades\Log::info('SubBlock data prepared', [
+                'subblocks_count' => $subblocks->total(),
+                'estates_count' => $estates->count(),
+                'estates' => $estates->toArray()
+            ]);
+
+            // Set breadcrumb
+            $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'List Sub Block']
+            ];
+
+            return view('backend.subblock.index', [
+                'subblocks' => $subblocks,
+                'estates' => $estates,
+                'estatesWithDivisions' => $estatesWithDivisions,
+                'breadcrumb' => $breadcrumb
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in SubBlockController@index: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memuat data sub block: ' . $e->getMessage());
+        }
+    }
+
+    public function create()
+    {
+        try {
+            // Get all unique estates with their divisions
+            $estatesData = SubBlock::select('estate')
+                ->distinct()
+                ->orderBy('estate')
+                ->get()
+                ->mapWithKeys(function($item) {
+                    $displayName = str_replace('Estate ', '', $item->estate);
+                    return [$displayName => $item->estate];
+                });
+
+            $estates = $estatesData->keys()->unique()->values();
+            $estatesWithDivisions = [];
+
+            // Build the divisions array with display names as keys
+            foreach ($estatesData as $displayName => $estate) {
+                $estatesWithDivisions[$displayName] = SubBlock::where('estate', $estate)
+                    ->select('divisi')
+                    ->distinct()
+                    ->orderBy('divisi')
+                    ->pluck('divisi')
+                    ->toArray();
+            }
+
+            // Set breadcrumb
+            $breadcrumb = [
+                ['title' => 'List Sub Block', 'url' => route('sub-blocks.index')],
+                ['title' => 'Tambah Sub Block']
+            ];
+
+            return view('backend.subblock.create', [
+                'estates' => $estates,
+                'estatesWithDivisions' => $estatesWithDivisions,
+                'breadcrumb' => $breadcrumb
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in SubBlockController@create: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memuat form tambah sub block: ' . $e->getMessage());
+        }
+    }
+
+    public function edit($id)
+    {
+        try {
+            $subblock = SubBlock::findOrFail($id);
+
+            // Get all unique estates with their divisions
+            $estates = SubBlock::select('estate')
+                ->distinct()
+                ->orderBy('estate')
+                ->pluck('estate');
+
+            // Get divisions for the current estate
+            $divisions = SubBlock::where('estate', $subblock->estate)
+                ->select('divisi')
+                ->distinct()
+                ->pluck('divisi');
+
+            // Get blocks for the current division
+            $blocks = SubBlock::where('estate', $subblock->estate)
+                ->where('divisi', $subblock->divisi)
+                ->select('blok')
+                ->distinct()
+                ->pluck('blok');
+
+            // Get all estates with their divisions for the dropdown
+            $estatesWithDivisions = [];
+            foreach ($estates as $estate) {
+                $estatesWithDivisions[$estate] = SubBlock::where('estate', $estate)
+                    ->select('divisi')
+                    ->distinct()
+                    ->orderBy('divisi')
+                    ->pluck('divisi')
+                    ->toArray();
+            }
+
+            // Set breadcrumb
+            $breadcrumb = [
+                ['title' => 'List Sub Block', 'url' => route('sub-blocks.index')],
+                ['title' => 'Edit Sub Block']
+            ];
+
+            return view('backend.subblock.edit', [
+                'subblock' => $subblock,
+                'estates' => $estates,
+                'divisions' => $divisions,
+                'blocks' => $blocks,
+                'estatesWithDivisions' => $estatesWithDivisions,
+                'breadcrumb' => $breadcrumb
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in SubBlockController@edit: ' . $e->getMessage());
+            return back()->with('error', 'Gagal memuat form edit sub block: ' . $e->getMessage());
+        }
+    }
+
+    public function getBlocksByDivision(Request $request)
+    {
+        try {
+            $divisi = $request->input('divisi');
+
+            if (empty($divisi)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Parameter divisi diperlukan'
+                ], 400);
+            }
+
+            $blocks = DB::table('sub_blocks')
+                ->where('divisi', $divisi)
+                ->select('blok')
+                ->distinct()
+                ->orderBy('blok')
+                ->get()
+                ->map(function($item) {
+                    return [
+                        'blok' => $item->blok,
+                        'value' => $item->blok
+                    ];
+                });
+
+            return response()->json($blocks);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in getBlocksByDivision: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat mengambil data blok',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+                        'errors' => $validator->errors()->toArray()
+                    ], 422);
+                }
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $data = $request->only([
+                'kode_petak', 'divisi', 'blok',
+                'luas_area', 'zona', 'keterangan', 'aktif', 'geom_json'
+            ]);
+
+            $estate = $request->input('estate');
+            $data['estate'] = str_starts_with($estate, 'Estate ') ? $estate : 'Estate ' . $estate;
+            $data['aktif'] = $request->boolean('aktif');
+
+            SubBlock::create($data);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data sub block berhasil disimpan',
+                    'redirect' => route('sub-blocks.index')
+                ]);
+            }
+
+            return redirect()->route('sub-blocks.index')
+                ->with('success', 'Data sub block berhasil disimpan');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error in SubBlockController@store: ' . $e->getMessage());
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+
+            return redirect()->route('sub-blocks.index')
+                ->with('success', 'Data sub block berhasil diperbarui');
+
+        } catch (\Exception $e) {
+            \Log::error('Error in SubBlockController@update: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat memperbarui data: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        try {
+            $subBlock = SubBlock::findOrFail($id);
+            // Gunakan forceDelete untuk menghapus permanen
+            $subBlock->forceDelete();
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data sub block berhasil dihapus permanen'
+                ]);
+            }
+
+            return redirect()->route('sub-blocks.index')
+                ->with('success', 'Data sub block berhasil dihapus permanen');
+
+        } catch (\Exception $e) {
+            \Log::error('Error in SubBlockController@destroy: ' . $e->getMessage());
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus data: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
+    }
+}

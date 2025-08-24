@@ -1,0 +1,310 @@
+/* Button styles */
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.2rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    text-decoration: none;
+    gap: 0.2rem;
+    line-height: 1.2;
+}
+
+.btn-action i {
+    font-size: 0.8em;
+}
+
+.btn-detail {
+    background-color: #2563eb;
+    color: white;
+}
+
+.btn-detail:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-status {
+    background-color: #e0e7ff;
+    color: #1e40af;
+}
+
+.btn-status:hover {
+    background-color: #c7d2fe;
+}
+
+/* LKT Status Badges */
+.status-draft {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+.status-ajukan {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.status-selesai {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+/* Button container */
+.button-container {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Dropdown styles */
+.dropdown-container {
+    display: inline-block;
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 160px;
+    z-index: 1050;
+    background: white;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+    margin-top: 0.2rem;
+    border: 1px solid #e5e7eb;
+    padding: 0.25rem 0;
+    font-size: 0.8rem;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.3rem 0.75rem;
+    text-align: left;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #374151;
+    transition: all 0.15s;
+    line-height: 1.3;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdown-item i {
+    width: 1.25rem;
+    text-align: center;
+    margin-right: 0.5rem;
+    color: #6b7280;
+}
+
+/* Filter Panel Styles */
+.filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    z-index: 50;
+    width: 28rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1.25rem;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-panel.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.filter-panel h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+/* Form elements in filter */
+.filter-panel label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.375rem;
+}
+
+.filter-panel select,
+.filter-panel input[type="text"] {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    color: #111827;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.filter-panel select:focus,
+.filter-panel input[type="text"]:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Activity Tracking Heading
+.vendor-container h2 {
+    margin-bottom: 1.5rem;
+} */
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    min-width: 60px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.status-not-process { 
+    background-color: #FEF3C7 !important; 
+    color: #92400E !important; 
+}
+
+.status-on-process { 
+    background-color: #DBEAFE !important; 
+    color: #1E40AF !important; 
+}
+
+.status-completed { 
+    background-color: #D1FAE5 !important; 
+    color: #065F46 !important; 
+}
+
+
+/* Loading state */
+.btn-action.loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+    padding-right: 2rem;
+}
+
+.btn-action.loading::after {
+    content: '';
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.8s linear infinite;
+    margin-left: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* Activity tracking specific styles */
+.activity-container {
+    margin-top: 1rem;
+}
+
+.lkt-scroll-container {
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+}
+
+/* Status Badges with higher specificity */
+.activity-container .status-badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.activity-container .status-not_started,
+.activity-container .not_started {  /* Handle different class variations */
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+}
+
+.activity-container .status-planned {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+.activity-container .status-in_progress,
+.activity-container .on_process {  /* Menangani kemungkinan class yang berbeda */
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+}
+
+.activity-container .status-completed {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* Fallback for any other status classes */
+.activity-container [class*="status-"] {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}

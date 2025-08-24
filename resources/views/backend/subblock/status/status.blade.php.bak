@@ -1,0 +1,354 @@
+@extends('layouts.app')
+
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+<style>
+    .vendor-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+    .form-input, .form-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    .form-input:focus, .form-select:focus {
+        border-color: #3b82f6;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        transition: all 0.15s ease-in-out;
+    }
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+        border: 1px solid #3b82f6;
+    }
+    .btn-primary:hover {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+    .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+        border: 1px solid #6b7280;
+    }
+    .btn-secondary:hover {
+        background-color: #4b5563;
+        border-color: #4b5563;
+    }
+    .menu-tabs {
+        display: flex;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+    .tab-button1 {
+        padding: 0.5rem 1rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-bottom: none;
+        margin-right: 0.25rem;
+        text-decoration: none;
+        color: #6b7280;
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+    .tab-button1.active, .tab-button1:hover {
+        background-color: #fff;
+        color: #3b82f6;
+        border-bottom-color: #fff;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        text-align: left;
+    }
+    .table thead th {
+        background-color: #f9fafb;
+        font-weight: 600;
+    }
+    .table tbody tr:hover {
+        background-color: #f9fafb;
+    }
+    .text-center {
+        text-align: center;
+    }
+    .text-end {
+        text-align: right;
+    }
+    .small-table {
+        font-size: 0.875rem;
+    }
+    .small-table th, .small-table td {
+        padding: 0.5rem;
+    }
+</style>
+@endpush
+
+@section('content')
+<div class="vendor-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Status Sub-blocks</h1>
+        <a href="{{ route('status-sub-blocks.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Tambah Status Sub Block
+        </a>
+    </div>
+
+    <!-- Menu Tabs -->
+    <div class="menu-tabs">
+        <a href="{{ route('sub-blocks.index') }}" class="tab-button1">Sub Block</a>
+        <a href="{{ route('status-sub-blocks.index') }}" class="tab-button1 active">Status Sub Block</a>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action="{{ route('status-sub-blocks.index') }}" method="GET" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Cari Kode Petak</label>
+                    <input type="text" name="search" id="search" class="form-control"
+                           value="{{ request('search') }}" placeholder="Masukkan kode petak...">
+                </div>
+                <div class="col-md-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select name="status" id="status" class="form-select">
+                        <option value="">Semua Status</option>
+                        <option value="NPC" {{ request('status') == 'NPC' ? 'selected' : '' }}>NPC</option>
+                        <option value="RC" {{ request('status') == 'RC' ? 'selected' : '' }}>RC</option>
+                        <option value="RPC" {{ request('status') == 'RPC' ? 'selected' : '' }}>RPC</option>
+                        <option value="Areal Cadangan" {{ request('status') == 'Areal Cadangan' ? 'selected' : '' }}>Areal Cadangan</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="tahun" class="form-label">tahun</label>
+                    <select name="tahun" id="tahun" class="form-select">
+                        <option value="">Semua tahun</option>
+                        <option value="status" {{ request('tahun') == 'status' ? 'selected' : '' }}>Status</option>
+                        <option value="tahun" {{ request('tahun') == 'tahun' ? 'selected' : '' }}>Tahun</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-1"></i> Cari
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover small-table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Kode Petak</th>
+                            <th>Tanggal Update</th>
+                            <th>tahun</th>
+                            <th>Status</th>
+                            <th class="text-end">Luas Status (ha)</th>
+                            <th>Divisi</th>
+                            <th class="text-center">Aktif</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($statusSubBlocks as $status)
+                            <tr>
+                                <td>{{ $status->id }}</td>
+                                <td>{{ $status->kode_petak }}</td>
+                                <td>{{ \Carbon\Carbon::parse($status->tanggal_update)->format('d/m/Y') }}</td>
+                                <td>{{ ucfirst($status->tahun) }}</td>
+                                <td>{{ $status->status }}</td>
+                                <td class="text-end">{{ number_format($status->luas_status, 2) }}</td>
+                                <td>{{ $status->subBlock->divisi ?? '-' }}</td>
+                                <td class="text-center">
+                                    <span class="badge bg-{{ $status->aktif ? 'success' : 'secondary' }}">
+                                        {{ $status->aktif ? 'Ya' : 'Tidak' }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a href="{{ route('status-sub-blocks.edit', $status->id) }}"
+                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-btn"
+                                                data-id="{{ $status->id }}" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="9" class="text-center py-4">
+                                    <div class="text-muted">Tidak ada data status sub-block</div>
+                                    <a href="{{ route('status-sub-blocks.create') }}" class="btn btn-sm btn-primary mt-2">
+                                        <i class="fas fa-plus me-1"></i> Tambah Data
+                                    </a>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($statusSubBlocks->hasPages())
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                    <div class="text-muted small">
+                        Menampilkan {{ $statusSubBlocks->firstItem() }} - {{ $statusSubBlocks->lastItem() }} dari {{ $statusSubBlocks->total() }} data
+                    </div>
+                    <div class="pagination-container">
+                        {{ $statusSubBlocks->links() }}
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus data ini?</p>
+                    <p class="text-danger">Data yang dihapus tidak dapat dikembalikan!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <form id="deleteForm" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize delete modal
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            const deleteForm = document.getElementById('deleteForm');
+
+            // Handle delete button click
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    deleteForm.action = `/status-sub-blocks/${id}`;
+                    deleteModal.show();
+                });
+            });
+
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+    @endpush
+
+                            <td>{{ $status->tanggal_update->format('d/m/Y') }}</td>
+                            <td>{{ $status->tahun }}</td>
+                            <td>{{ $status->status }}</td>
+                            <td class="text-end">{{ number_format($status->subBlock->luas_area ?? 0, 2) }}</td>
+                            <td class="text-end">{{ number_format($status->luas_status, 2) }}</td>
+                            <td>{{ $status->subBlock->divisi ?? '-' }}</td>
+                            <td class="text-center">
+                                @if($status->aktif)
+                                    <span class="badge bg-success">Aktif</span>
+                                @else
+                                    <span class="badge bg-danger">Tidak Aktif</span>
+                                @endif
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-info btn-view" data-id="{{ $status->id }}" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-warning btn-edit" data-id="{{ $status->id }}" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-delete" data-id="{{ $status->id }}" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="11" class="text-center py-3">
+                                <div class="text-muted">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                    <p class="mb-0">Tidak ada data status sub-block</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            @if($statusSubBlocks->hasPages())
+                <div class="mt-3">
+                    {{ $statusSubBlocks->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
+            if (!$(this).val()) {
+                $(this).val("{{ date('Y-m-d') }}");
+            }
+        });
+        // Initialize first status form
+        addNewStatusForm();
+
+        // Add click handler for the map button if it exists
+        if ($('#showMapBtn').length) {
+            $('#showMapBtn').on('click', function() {
+                // Your map initialization code here
+                if (!map) {
+                    initMap();
+                }
+            });
+        }
+
+
+    // Map initialization is now handled in the main document ready function
+</script>
+@endpush
+
+@endsection
